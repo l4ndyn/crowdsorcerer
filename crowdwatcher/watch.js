@@ -1,7 +1,8 @@
 const axios_ = require('axios');
 
 const login = require('facebook-chat-api');
-const processors = require('./processors.js')
+const typeLocator = require('./typeLocator.js');
+const processors = require('./processors.js');
 
 let appState;
 try {
@@ -32,31 +33,15 @@ const postBody = (type, body) => {
     });
 }
 
-const getEventType = (event) => {
-    let type = 'unknown';
-
-    if (event.type == 'message') {
-        if (event.attachments.length == 0) {
-            type = 'text';
-        } else if (event.attachments.length == 1) {
-            const at = event.attachments[0];
-            if (at.type == 'photo') {
-                type = 'image';
-            } else if (at.type == 'video') {
-                type = 'video';
-            }
-        }
-    }
-
-    return type;
-}
-
 const processEvent = async (event) => {
     console.log(event);
-    const type = getEventType(event);
+    const type = typeLocator.getEventType(event);
+    console.log('Type: ' + type);
 
     if (type == 'unknown') return;
     const body = processors.process(type, event);
+    console.log('Body: ' + JSON.stringify(body));
+    console.log();
 
     await postBody(type, body);
 };
