@@ -19,7 +19,10 @@ const axios = axios_.create({
 const typeToEndpoint = {
     text: 'texts',
     image: 'images',
-    video: 'videos'
+    video: 'videos',
+    voiceMessage: 'voiceMessages',
+    youtubeUrl: 'youtubeUrls',
+    spotifyUrl: 'spotifyUrls',
 };
 
 const postBody = (type, body) => {
