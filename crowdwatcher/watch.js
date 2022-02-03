@@ -19,7 +19,7 @@ const axios = axios_.create({
 const typeToEndpoint = (type) => type + 's';
 
 const postBody = (type, body) => {
-    const endpoint = typeToEndpoint[type];
+    const endpoint = typeToEndpoint(type);
     if (!endpoint) throw 'Invalid type: ' + type;
 
     return axios.post('/' + endpoint, JSON.stringify(body), { 
