@@ -5,25 +5,44 @@ namespace Crowdsorcerer
 {
     public static class Sorcerer
     {
-        static Dictionary<string, Message> messages;
+        static Dictionary<string, Url> yts;
 
         public static void Init()
         {
-            messages = new();
+            yts = new();
         }
 
         public static void AddText(Text text)
         {
-            Console.WriteLine("text added");
+            Console.WriteLine("Text added.");
         }
 
         public static void AddYoutube(Url url)
         {
-            Console.WriteLine("yt added");
+            yts.Add(url.messageId, url);
         }
+
         public static void AddSpotify(Url url)
         {
-            Console.WriteLine("spot added");
+            Console.WriteLine("Spot added");
         }
+
+        public static void AddReaction(Reaction reaction)
+        {
+            if (yts.TryGetValue(reaction.targetMessageId, out Url url))
+            {
+                url.votes++;
+            }
+        }
+        
+        public static void RemoveReaction(Reaction reaction)
+        {
+            if (yts.TryGetValue(reaction.targetMessageId, out Url url))
+            {
+                url.votes--;
+            }
+        }
+
+
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Crowdsorcerer
+﻿using System.Text;
+
+namespace Crowdsorcerer
 {
     public record Reaction
     {
@@ -8,6 +10,7 @@
     public record Message
     {
         public string messageId;
+        public int votes;
     }
 
     public record Image : Message

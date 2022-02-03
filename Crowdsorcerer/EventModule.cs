@@ -1,5 +1,4 @@
 ﻿using System;
-using Crowdsorcerer.Reactions;
 using Nancy;
 using Nancy.ModelBinding;
 
@@ -12,6 +11,8 @@ namespace Crowdsorcerer
             AddEndpoint<Text>("texts", Sorcerer.AddText);
             AddEndpoint<Url>("youtubeUrls", Sorcerer.AddYoutube);
             AddEndpoint<Url>("spotifyUrls", Sorcerer.AddSpotify);
+            AddEndpoint<Reaction>("reactions", Sorcerer.AddReaction);
+            AddEndpoint<Reaction>("removedReactions", Sorcerer.RemoveReaction);
         }
 
         void AddEndpoint<T>(string endpoint, Action<T> action) => Post($"/{endpoint}", x =>
