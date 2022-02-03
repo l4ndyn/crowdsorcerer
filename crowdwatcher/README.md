@@ -1,5 +1,5 @@
 # How to login
-login.js doesn't work sucks for me but get a cookie manually
+login.js doesn't work sucks for me but you can get a cookie manually
 
 # How to get cookie
 1. Use the Cookie Extractor extension (https://chrome.google.com/webstore/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco/related) to get a text of the cookies.
