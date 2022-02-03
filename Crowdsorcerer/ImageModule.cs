@@ -1,22 +1,21 @@
 ﻿using System;
 using Nancy;
-using Nancy.Extensions;
 using Nancy.ModelBinding;
 
 namespace Crowdsorcerer
 {
-    record Text
+    record Image
     {
-        public string text;
+        public string imageUrl, description;
     }
 
-    public class TextModule : NancyModule
+    public class ImageModule : NancyModule
     {
-        public TextModule()
+        public ImageModule()
         {
-            Post("/texts", x =>
+            Post("/images", x =>
             {
-                Text body = this.Bind();
+                Image body = this.Bind();
                 Console.WriteLine(body);
 
                 return HttpStatusCode.OK;
