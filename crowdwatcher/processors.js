@@ -5,6 +5,14 @@ module.exports = {
                 return this.processText(event);
             case 'image':
                 return this.processImage(event);
+            case 'video':
+                return this.processVideo(event);
+            case 'youtubeUrl':
+                return this.processUrl(event);
+            case 'spotifyUrl':
+                return this.processUrl(event);
+            case 'voiceMessage':
+                return this.processAudio(event);
             default:
                 return undefined;
         }
@@ -26,5 +34,16 @@ module.exports = {
             description: event.body,
             videoUrl: event.attachments[0].url
         };
-    }
+    },
+    processUrl: function(event) {
+        return {
+            url: event.body
+        };
+    },
+    processAudio: function(event) {
+        return {
+            description: event.body,
+            audioUrl: event.attachments[0].url
+        };
+    },
 }
