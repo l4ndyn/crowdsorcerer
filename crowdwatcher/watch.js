@@ -17,6 +17,7 @@ const axios = axios_.create({
 
 const typeToEndpoint = {
     text: "texts",
+    image: "images"
 };
 
 const postBody = (type, body) => {
@@ -30,12 +31,22 @@ const postBody = (type, body) => {
     });
 }
 
-const processEvent = async (event) => {
+const getEventType = (event) => {
     let type = 'unknown';
 
     if (event.type == 'message') {
-        type = 'text';   
+        if (event.attachments.length == 0) {
+            type = 'text';
+        } else if (event.attachments.length == 1 && event.attachments[0].type == 'photo') {
+            type = 'image';
+        }
     }
+
+    return type;
+}
+
+const processEvent = async (event) => {
+    const type = getEventType(event);
 
     if (type == 'unknown') return;
     const body = processors.process(type, event);
