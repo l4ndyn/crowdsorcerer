@@ -23,6 +23,7 @@ const typeToEndpoint = {
     voiceMessage: 'voiceMessages',
     youtubeUrl: 'youtubeUrls',
     spotifyUrl: 'spotifyUrls',
+    reaction: 'reactions'
 };
 
 const postBody = (type, body) => {
@@ -43,6 +44,11 @@ const processEvent = async (event) => {
 
     if (type == 'unknown') return;
     const body = processors.process(type, event);
+
+    if (event.type == 'message') {
+        body.messageId = event.messageID;
+    }
+
     console.log('Body: ' + JSON.stringify(body));
     console.log();
 

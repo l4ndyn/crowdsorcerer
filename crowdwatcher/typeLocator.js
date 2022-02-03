@@ -40,6 +40,8 @@ module.exports = {
                     type = 'voiceMessage';
                 }
             }
+        } else if (event.type == 'message_reaction') {
+            type = 'reaction';
         }
     
         return type;

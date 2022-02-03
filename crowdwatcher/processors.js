@@ -1,3 +1,5 @@
+const messageTypes = ['text', 'image', 'video', 'youtubeUrl']
+
 module.exports = {
     process: function(type, event) {
         switch (type) {
@@ -13,6 +15,8 @@ module.exports = {
                 return this.processUrl(event);
             case 'voiceMessage':
                 return this.processAudio(event);
+            case 'reaction':
+                return this.processReaction(event);
             default:
                 return undefined;
         }
@@ -46,4 +50,9 @@ module.exports = {
             audioUrl: event.attachments[0].url
         };
     },
+    processReaction: function(event) {
+        return {
+            targetMessageId: event.messageID
+        };
+    }
 }
