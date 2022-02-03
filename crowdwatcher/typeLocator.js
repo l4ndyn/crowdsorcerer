@@ -41,7 +41,8 @@ module.exports = {
                 }
             }
         } else if (event.type == 'message_reaction') {
-            type = 'reaction';
+            if (event.reaction) type = 'reaction';
+            else type = 'removedReaction';
         }
     
         return type;

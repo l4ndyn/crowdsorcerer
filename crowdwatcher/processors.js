@@ -17,6 +17,8 @@ module.exports = {
                 return this.processAudio(event);
             case 'reaction':
                 return this.processReaction(event);
+            case 'removedReaction':
+                return this.processReaction(event);
             default:
                 return undefined;
         }
