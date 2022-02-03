@@ -16,8 +16,9 @@ const axios = axios_.create({
 });
 
 const typeToEndpoint = {
-    text: "texts",
-    image: "images"
+    text: 'texts',
+    image: 'images',
+    video: 'videos'
 };
 
 const postBody = (type, body) => {
@@ -37,8 +38,13 @@ const getEventType = (event) => {
     if (event.type == 'message') {
         if (event.attachments.length == 0) {
             type = 'text';
-        } else if (event.attachments.length == 1 && event.attachments[0].type == 'photo') {
-            type = 'image';
+        } else if (event.attachments.length == 1) {
+            const at = event.attachments[0];
+            if (at.type == 'photo') {
+                type = 'image';
+            } else if (at.type == 'video') {
+                type = 'video';
+            }
         }
     }
 
@@ -46,6 +52,7 @@ const getEventType = (event) => {
 }
 
 const processEvent = async (event) => {
+    console.log(event);
     const type = getEventType(event);
 
     if (type == 'unknown') return;
@@ -66,7 +73,7 @@ module.exports = {
 			api.setOptions({ listenEvents: true });
 			api.setOptions({ selfListen: true });
 
-			console.log(`[Crowdwatcher] Watch has started at ${new Date()}.`);
+			console.log(`Watch has started at ${new Date()}.`);
 			api.listenMqtt(async (err, event) => {
 				if(err) return console.error(err);
 

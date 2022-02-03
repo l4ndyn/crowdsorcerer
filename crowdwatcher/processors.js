@@ -18,7 +18,13 @@ module.exports = {
     processImage: function(event) {
         return {
             description: event.body,
-            imageUrl: event.attachments[0].largePreviewUrl;
+            imageUrl: event.attachments[0].largePreviewUrl
+        };
+    },
+    processVideo: function(event) {
+        return {
+            description: event.body,
+            videoUrl: event.attachments[0].url
         };
     }
 }
