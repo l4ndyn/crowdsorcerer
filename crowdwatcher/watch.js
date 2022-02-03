@@ -16,15 +16,7 @@ const axios = axios_.create({
     timeout: 1000
 });
 
-const typeToEndpoint = {
-    text: 'texts',
-    image: 'images',
-    video: 'videos',
-    voiceMessage: 'voiceMessages',
-    youtubeUrl: 'youtubeUrls',
-    spotifyUrl: 'spotifyUrls',
-    reaction: 'reactions'
-};
+const typeToEndpoint = (type) => type + 's';
 
 const postBody = (type, body) => {
     const endpoint = typeToEndpoint[type];
