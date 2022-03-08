@@ -24,7 +24,8 @@ module.exports = {
 
                 const url = toUrl(event.body);
                 if (url) {
-                    if (url.origin == 'https://youtube.com' && (url.pathname == '/watch' || url.pathname == '/playlist')) {
+                    if (((url.origin == 'https://youtube.com' || url.origin == 'https://www.youtube.com')
+                     && (url.pathname == '/watch' || url.pathname == '/playlist')) || url.origin == 'https://youtu.be') {
                         type = 'youtubeUrl';
                     } else if (url.origin == 'https://open.spotify.com' && (url.pathname.startsWith('/track/') || url.pathname.startsWith('/playlist/'))) {
                         type = 'spotifyUrl';
