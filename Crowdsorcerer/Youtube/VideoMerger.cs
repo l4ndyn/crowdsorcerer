@@ -1,6 +1,7 @@
 ﻿using DotNetTools.SharpGrabber.Converter;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Buffered;
@@ -10,6 +11,8 @@ namespace Crowdsorcerer.Youtube
     public static class VideoMerger
     {
         static string FFmpegPath => Path.Combine(Environment.CurrentDirectory, "FFmpeg\\bin\\x64\\FFmpeg.exe");
+
+        static CancellationTokenSource cts = new();
         
         public static async Task Merge(string sourceAudioPath, string sourceVideoPath, string outputPath)
         {
@@ -23,15 +26,18 @@ namespace Crowdsorcerer.Youtube
         }
         public static async Task Merge(Uri sourceAudioUri, Uri sourceVideoUri, Uri outputUri)
         {
+            cts.Cancel();
+            cts = new();
+
             var res = await Cli.Wrap(FFmpegPath)
                 .WithArguments($"-i {sourceVideoUri} -i {sourceAudioUri} -c:v h264 -c:a aac -f flv -listen 1 {outputUri}")
-                .ExecuteBufferedAsync();
+                .ExecuteBufferedAsync(cts.Token);
 
             Console.WriteLine(res.StandardOutput);
 
-            Console.WriteLine("Output file successfully created.");
+            Console.WriteLine("Output stream successfully created.");
         }
 
-        public static Uri GetUniqueOutputUri() => new("http://localhost:12235/crowdsorcerer/video");
+        public static Uri GetUniqueOutputUri() => new("http://localhost:12235/crowdsorcerer/" + Unique.Name());
     }
 }

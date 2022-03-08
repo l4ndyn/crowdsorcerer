@@ -44,7 +44,7 @@ namespace Crowdsorcerer.Youtube
                 var audioPath = await DownloadMedia(audioStream, result);
 				var videoPath = await DownloadMedia(videoStream, result);
 
-                var outputPath = UniqueFileNames.New("mp4");
+                var outputPath = Unique.FileName("mp4");
 				await VideoMerger.Merge(audioPath, videoPath, outputPath);
 
                 return outputPath;
