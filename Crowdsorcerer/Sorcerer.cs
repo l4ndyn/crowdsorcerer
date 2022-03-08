@@ -1,48 +1,98 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using Crowdsorcerer.Projectors;
+using Crowdsorcerer.Youtube;
+using DotNetTools.SharpGrabber;
+using DotNetTools.SharpGrabber.Grabbed;
 
 namespace Crowdsorcerer
 {
-    public static class Sorcerer
+    public class Sorcerer
     {
-        static Dictionary<string, Url> yts;
+        Dictionary<string, Url> yts;
+        List<Url> orderedYts;
 
-        public static void Init()
+        Projector projector;
+
+        public Sorcerer()
         {
             yts = new();
+            orderedYts = new();
+
+            projector = new();
         }
 
-        public static void AddText(Text text)
+        public void AddText(Text text)
         {
             Console.WriteLine("Text added.");
         }
 
-        public static void AddYoutube(Url url)
+        public void AddYoutube(Url url)
         {
             yts.Add(url.messageId, url);
+            Console.WriteLine("Yt added");
+            ProjectYoutube(url);
         }
 
-        public static void AddSpotify(Url url)
+        public void AddSpotify(Url url)
         {
             Console.WriteLine("Spot added");
+            ProjectSpotify(url);
         }
 
-        public static void AddReaction(Reaction reaction)
+        public void AddReaction(Reaction reaction)
         {
             if (yts.TryGetValue(reaction.targetMessageId, out Url url))
             {
                 url.votes++;
+                SortYts();
             }
         }
         
-        public static void RemoveReaction(Reaction reaction)
+        public void RemoveReaction(Reaction reaction)
         {
             if (yts.TryGetValue(reaction.targetMessageId, out Url url))
             {
                 url.votes--;
+                SortYts();
             }
         }
 
+        void SortYts() => orderedYts.Sort((x, y) => x.votes.CompareTo(y.votes));
 
+        public void ProjectYoutube(Url url) => projector.ProjectYoutube(url.url);
+        void ProjectSpotify(Url url)
+        {
+            string urlString = url.url;
+
+            try
+            {
+                Process.Start(urlString);
+            }
+            catch
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    urlString = urlString.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {urlString}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", urlString);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", urlString);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
     }
 }
