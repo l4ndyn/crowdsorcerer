@@ -55,6 +55,11 @@ namespace Crowdsorcerer.Youtube
             }
 		}
 
+        public override Task<YoutubeVideoInfo> GetUris(string url)
+        {
+            throw new NotImplementedException();
+        }
+
         GrabbedMedia GetBestAudio(GrabResult result)
         {
             return result.Resources<GrabbedMedia>().FirstOrDefault(m => m.Channels == MediaChannels.Audio);

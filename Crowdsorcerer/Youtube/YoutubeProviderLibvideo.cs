@@ -29,10 +29,10 @@ namespace Crowdsorcerer.Youtube
             }
         }
 
-        public async Task<(Uri audioUri, Uri videoUri)> GetUris(string url)
+        public override async Task<YoutubeVideoInfo> GetUris(string url)
         {
             var (audio, video) = await GetBestMedia(url);
-            return (new(audio.Uri), new(video.Uri));
+            return new YoutubeVideoInfo(new(video.Uri), new(audio.Uri), video.Title, video.Info.LengthSeconds ?? -1);
         }
 
         async Task<(YouTubeVideo audio, YouTubeVideo video)> GetBestMedia(string url)
@@ -58,7 +58,7 @@ namespace Crowdsorcerer.Youtube
             var videos = resources.Where(r => r.AdaptiveKind == AdaptiveKind.Video && r.AudioFormat == AudioFormat.Unknown).ToList();
             videos.Sort((x, y) => y.Resolution.CompareTo(x.Resolution));
 
-            return videos.FirstOrDefault(v => v.Resolution <= 1080);
+            return videos.FirstOrDefault(v => v.Resolution <= 480);
         }
         YouTubeVideo GetBestAudio(IEnumerable<YouTubeVideo> resources)
         {
