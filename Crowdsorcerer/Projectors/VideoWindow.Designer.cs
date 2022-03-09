@@ -54,6 +54,8 @@ namespace Crowdsorcerer.Projectors
             this.Controls.Add(this.blackoutPanel);
             this.Name = "VideoWindow";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.VideoWindow_FormClosed);
+            this.DoubleClick += new System.EventHandler(this.VideoWindow_DoubleClick);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.VideoWindow_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.videoView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.audioView)).EndInit();
             this.ResumeLayout(false);
