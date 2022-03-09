@@ -14,7 +14,14 @@ function toUrl(string) {
     return undefined;
 }
 
+const mustStartWith = ['yt ', 'yt:', "yt: ", "youtube ", "youtube:", "youtube: "]
+function isYoutubeTitleIdentifier(message) {
+    
+    return mustStartWith.map(s => message.startsWith(s)).reduce((a, c) => a || c);
+}
+
 module.exports = {
+    mustStartWith: mustStartWith,
     getEventType: function(event) {
         let type = 'unknown';
     
@@ -30,6 +37,10 @@ module.exports = {
                     } else if (url.origin == 'https://open.spotify.com' && (url.pathname.startsWith('/track/') || url.pathname.startsWith('/playlist/'))) {
                         type = 'spotifyUrl';
                     }
+                }
+
+                if (isYoutubeTitleIdentifier(event.body)) {
+                    type = 'youtubeTitle';
                 }
             } else if (event.attachments.length == 1) {
                 const at = event.attachments[0];

@@ -58,5 +58,19 @@ namespace Crowdsorcerer.Projectors
                 videoWindow.Play(videoUri, audioUri);
             }
         }
+        public async Task ProjectYoutube(YoutubeTitle title)
+        {
+            VideoSearch search = new();
+            var videos = await search.GetVideos(title.title, 1);
+
+            await ProjectYoutube(new YoutubeUrl { url = videos.First().getUrl() });
+        }
+
+        public async Task ProjectYoutube(YoutubeVideoSource source)
+        {
+            if (source is YoutubeUrl url) await ProjectYoutube(url);
+            if (source is YoutubeTitle title) await ProjectYoutube(title);
+            else throw new ArgumentException();
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace Crowdsorcerer
             AddEndpoint<Url>("spotifyUrls", sorcerer.AddSpotify);
             AddEndpoint<Reaction>("reactions", sorcerer.AddReaction);
             AddEndpoint<Reaction>("removedReactions", sorcerer.RemoveReaction);
+            AddEndpoint<Text>("youtubeTitles", sorcerer.AddYoutube);
         }
 
         void AddEndpoint<T>(string endpoint, Action<T> action) => Post($"/{endpoint}", x =>

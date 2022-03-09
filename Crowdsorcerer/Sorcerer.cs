@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Crowdsorcerer.Projectors;
 using Crowdsorcerer.Youtube;
 using DotNetTools.SharpGrabber;
@@ -15,14 +16,29 @@ namespace Crowdsorcerer
         Dictionary<string, Url> yts;
         List<Url> orderedYts;
 
+        Queue<YoutubeVideoSource> youtubeQueue;
+
         Projector projector;
+        object projectionTaskLock = new();
+        Task currentProjectionTask;
 
         public Sorcerer()
         {
             yts = new();
             orderedYts = new();
 
+            youtubeQueue = new();
+
             projector = new();
+            projector.VideoFinished += PlayNext;
+        }
+
+        public void PlayNext()
+        {
+            if (youtubeQueue.Count == 0) return;
+
+            var url = youtubeQueue.Dequeue();
+            projector.ProjectYoutube(url);
         }
 
         public void AddText(Text text)
@@ -32,9 +48,26 @@ namespace Crowdsorcerer
 
         public void AddYoutube(Url url)
         {
-            yts.Add(url.messageId, url);
-            Console.WriteLine("Yt added");
-            ProjectYoutube(url);
+            lock (projectionTaskLock)
+            {
+                var ytUrl = new YoutubeUrl { url = url.url };
+
+                if (!projector.IsVideoPlaying && (currentProjectionTask == null || currentProjectionTask.IsCompleted))
+                    currentProjectionTask = projector.ProjectYoutube(ytUrl);
+                else youtubeQueue.Enqueue(ytUrl);
+            }
+        }
+
+        public void AddYoutube(Text title)
+        {
+            lock (projectionTaskLock)
+            {
+                var ytTitle = new YoutubeTitle { title = title.text };
+
+                if (!projector.IsVideoPlaying && (currentProjectionTask == null || currentProjectionTask.IsCompleted))
+                    currentProjectionTask = projector.ProjectYoutube(ytTitle);
+                else youtubeQueue.Enqueue(ytTitle);
+            }
         }
 
         public void AddSpotify(Url url)
@@ -63,7 +96,6 @@ namespace Crowdsorcerer
 
         void SortYts() => orderedYts.Sort((x, y) => x.votes.CompareTo(y.votes));
 
-        public void ProjectYoutube(Url url) => projector.ProjectYoutube(url.url);
         void ProjectSpotify(Url url)
         {
             string urlString = url.url;

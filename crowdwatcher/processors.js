@@ -1,4 +1,5 @@
-const messageTypes = ['text', 'image', 'video', 'youtubeUrl']
+const typeLocator = require('./typeLocator.js');
+const messageTypes = ['text', 'image', 'video', 'youtubeUrl'];
 
 module.exports = {
     process: function(type, event) {
@@ -19,6 +20,8 @@ module.exports = {
                 return this.processReaction(event);
             case 'removedReaction':
                 return this.processReaction(event);
+            case 'youtubeTitle':
+                return this.processYoutubeTitle(event);
             default:
                 return undefined;
         }
@@ -27,6 +30,19 @@ module.exports = {
     processText: function(event) {
         return {
             text: event.body
+        };
+    },
+    processYoutubeTitle: function(event) {
+        let body;
+        for (const identifier of typeLocator.mustStartWith) {
+            if (event.body.startsWith(identifier)) {
+                body = event.body.slice(identifier.length);
+                break;
+            }
+        }
+        
+        return {
+            text: body
         };
     },
     processImage: function(event) {
