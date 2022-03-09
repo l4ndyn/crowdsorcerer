@@ -44,7 +44,7 @@ namespace Crowdsorcerer.Projectors
             };
             videoPlayer.EncounteredError += (sender, e) =>
             {
-                Console.WriteLine("wtf");
+                
             };
         }
 

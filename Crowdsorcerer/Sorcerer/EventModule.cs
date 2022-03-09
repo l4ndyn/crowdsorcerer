@@ -2,7 +2,7 @@
 using Nancy;
 using Nancy.ModelBinding;
 
-namespace Crowdsorcerer
+namespace Crowdsorcerer.Sorcerer
 {
     public class EventModule : NancyModule
     {

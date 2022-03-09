@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Crowdsorcerer
+﻿namespace Crowdsorcerer.Sorcerer
 {
     public record Reaction
     {

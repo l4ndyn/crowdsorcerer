@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Crowdsorcerer.Projectors;
 using Crowdsorcerer.Youtube;
-using DotNetTools.SharpGrabber;
-using DotNetTools.SharpGrabber.Grabbed;
 
-namespace Crowdsorcerer
+namespace Crowdsorcerer.Sorcerer
 {
     public class Sorcerer
     {
