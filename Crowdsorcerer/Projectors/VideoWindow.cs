@@ -14,6 +14,8 @@ namespace Crowdsorcerer.Projectors
         bool isBusy;
         public bool IsPlaying => videoPlayer.IsPlaying || isBusy;
 
+        bool isFullscreen;
+
         public VideoWindow()
         {
             if (!DesignMode)
@@ -22,6 +24,7 @@ namespace Crowdsorcerer.Projectors
             }
 
             InitializeComponent();
+            KeyPreview = true;
 
             libVLC = new LibVLC();
             videoPlayer = new MediaPlayer(libVLC);
@@ -79,6 +82,37 @@ namespace Crowdsorcerer.Projectors
             videoPlayer.Stop();
             videoPlayer.Dispose();
             libVLC.Dispose();
+        }
+
+        private void VideoWindow_DoubleClick(object sender, EventArgs e)
+        {
+            GoFullscreen();
+        }
+
+
+        void GoFullscreen()
+        {
+            FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Maximized;
+
+            isFullscreen = true;
+        }
+        void LeaveFullscreen()
+        {
+
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            WindowState = FormWindowState.Normal;
+
+            isFullscreen = false;
+        }
+
+        private void VideoWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.F11)
+            {
+                if (!isFullscreen) GoFullscreen();
+                else LeaveFullscreen();
+            }
         }
     }
 }
