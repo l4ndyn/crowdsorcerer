@@ -25,11 +25,10 @@ EventModule.RegisterSorcerer(sorcerer);
 //videoWindow.Shown += (_, _) => videoWindow.Play(uri);
 //Application.Run(videoWindow);
 
-using (var nancyHost = new NancyHost(new Uri(ENDPOINT)))
-{
-    nancyHost.Start();
+using var nancyHost = new NancyHost(new Uri(ENDPOINT));
+nancyHost.Start();
 
-    Console.WriteLine($"Listening on {ENDPOINT}. Press enter to stop.");
+Console.WriteLine($"Listening on {ENDPOINT}...");
 
-    Console.ReadKey();
-}
+while (true) 
+    Console.ReadLine();
