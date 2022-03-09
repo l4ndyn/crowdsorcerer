@@ -20,7 +20,7 @@ namespace Crowdsorcerer
 
         Projector projector;
         object projectionTaskLock = new();
-        Task currentProjectionTask;
+        Task currentProjectionTask = Task.CompletedTask;
 
         public Sorcerer()
         {
@@ -41,33 +41,22 @@ namespace Crowdsorcerer
             projector.ProjectYoutube(url);
         }
 
+        public void AddYoutube(Url url) => ProjectYoutube(new YoutubeUrl { url = url.url });
+        public void AddYoutube(Text title) => ProjectYoutube(new YoutubeTitle { title = title.text });
+
+        public void ProjectYoutube(YoutubeVideoSource source)
+        {
+            lock (projectionTaskLock)
+            {
+                if (!projector.IsVideoPlaying && currentProjectionTask.IsCompleted)
+                    currentProjectionTask = projector.ProjectYoutube(source);
+                else youtubeQueue.Enqueue(source);
+            }
+        }
+
         public void AddText(Text text)
         {
             Console.WriteLine("Text added.");
-        }
-
-        public void AddYoutube(Url url)
-        {
-            lock (projectionTaskLock)
-            {
-                var ytUrl = new YoutubeUrl { url = url.url };
-
-                if (!projector.IsVideoPlaying && (currentProjectionTask == null || currentProjectionTask.IsCompleted))
-                    currentProjectionTask = projector.ProjectYoutube(ytUrl);
-                else youtubeQueue.Enqueue(ytUrl);
-            }
-        }
-
-        public void AddYoutube(Text title)
-        {
-            lock (projectionTaskLock)
-            {
-                var ytTitle = new YoutubeTitle { title = title.text };
-
-                if (!projector.IsVideoPlaying && (currentProjectionTask == null || currentProjectionTask.IsCompleted))
-                    currentProjectionTask = projector.ProjectYoutube(ytTitle);
-                else youtubeQueue.Enqueue(ytTitle);
-            }
         }
 
         public void AddSpotify(Url url)
