@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Crowdsorcerer.Youtube;
 using YouTubeSearch;
 using Action = System.Action;
+using Log = Serilog.Log;
 
 namespace Crowdsorcerer.Projectors
 {
@@ -35,7 +36,7 @@ namespace Crowdsorcerer.Projectors
         public async Task ProjectYoutube(YoutubeUrl url)
         {
             var videoInfo = await youtubeProvider.GetUris(url.url);
-            Console.WriteLine(videoInfo);
+            Log.Debug($"[Projector] Projecting video with info: {videoInfo}");
 
             if (videoInfo.length != -1 && videoInfo.length < 60)
                 ProjectMuxed(videoInfo.videoUri, videoInfo.audioUri);
@@ -62,6 +63,8 @@ namespace Crowdsorcerer.Projectors
         {
             VideoSearch search = new();
             var videos = await search.GetVideos(title.title, 1);
+
+            Log.Debug($"[Projector] Fetching video url from title: {title.title}");
 
             await ProjectYoutube(new YoutubeUrl { url = videos.First().getUrl() });
         }

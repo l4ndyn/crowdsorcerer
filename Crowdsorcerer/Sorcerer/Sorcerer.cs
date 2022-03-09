@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Crowdsorcerer.Projectors;
 using Crowdsorcerer.Youtube;
+using Serilog;
 
 namespace Crowdsorcerer.Sorcerer
 {
@@ -32,7 +33,12 @@ namespace Crowdsorcerer.Sorcerer
 
         public void PlayNext()
         {
-            if (youtubeQueue.Count == 0) return;
+            Log.Information("[Sorcerer] Playing next media...");
+            if (youtubeQueue.Count == 0)
+            {
+                Log.Information("[Sorcerer] There is no more media in the queue.");
+                return;
+            }
 
             var url = youtubeQueue.Dequeue();
             projector.ProjectYoutube(url);
@@ -53,12 +59,12 @@ namespace Crowdsorcerer.Sorcerer
 
         public void AddText(Text text)
         {
-            Console.WriteLine("Text added.");
+            Log.Debug("Text added.");
         }
 
         public void AddSpotify(Url url)
         {
-            Console.WriteLine("Spot added");
+            Log.Debug("Spot added");
             ProjectSpotify(url);
         }
 

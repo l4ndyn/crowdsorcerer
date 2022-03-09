@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 using VideoLibrary;
 
 namespace Crowdsorcerer.Youtube
@@ -67,12 +68,12 @@ namespace Crowdsorcerer.Youtube
 
         async Task<string> DownloadVideo(YouTubeVideo video)
         {
-            Console.WriteLine($"Downloading {video.Title} [{video.Format}]...");
+            Log.Information($"[YoutubeProvider] Downloading {video.Title} [{video.Format}]...");
 
             var path = TempFiles.New();
             await SaveVideo(video, path);
 
-            Console.WriteLine("Downloaded.");
+            Log.Information($"[YoutubeProvider] Successfully ownloaded {video.Title} [{video.Format}].");
 
             return path;
         }

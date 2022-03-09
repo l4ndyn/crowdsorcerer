@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Converter;
 using DotNetTools.SharpGrabber.Grabbed;
+using Serilog;
 
 namespace Crowdsorcerer.Youtube
 {
@@ -78,7 +79,7 @@ namespace Crowdsorcerer.Youtube
 
         async Task<string> DownloadMedia(GrabbedMedia media, IGrabResult grabResult)
 		{
-			Console.WriteLine("Downloading {0}...", media.Title ?? media.FormatTitle ?? media.Resolution);
+			Log.Information("[YoutubeProvider] Downloading {0}...", media.Title ?? media.FormatTitle ?? media.Resolution);
 
 			using var response = await client.GetAsync(media.ResourceUri);
 			response.EnsureSuccessStatusCode();

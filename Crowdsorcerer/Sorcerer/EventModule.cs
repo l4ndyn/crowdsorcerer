@@ -1,6 +1,7 @@
 ﻿using System;
 using Nancy;
 using Nancy.ModelBinding;
+using Serilog;
 
 namespace Crowdsorcerer.Sorcerer
 {
@@ -23,7 +24,7 @@ namespace Crowdsorcerer.Sorcerer
         {
             T body = this.Bind();
 
-            Console.WriteLine(body);
+            Log.Information($"[Events] Event received on endpoint {endpoint} with body: {body}");
             action(body);
 
             return HttpStatusCode.OK;

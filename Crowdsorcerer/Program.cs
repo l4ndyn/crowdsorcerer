@@ -4,11 +4,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Crowdsorcerer;
+using Crowdsorcerer.Sorcerer;
 using Crowdsorcerer.Youtube;
 using Nancy;
 using Nancy.Hosting.Self;
+using Serilog;
 
 const string ENDPOINT = "http://localhost:12234/";
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.AppSettings()
+    .CreateLogger();
 
 Sorcerer sorcerer = new();
 EventModule.RegisterSorcerer(sorcerer);
@@ -28,7 +34,7 @@ EventModule.RegisterSorcerer(sorcerer);
 using var nancyHost = new NancyHost(new Uri(ENDPOINT));
 nancyHost.Start();
 
-Console.WriteLine($"Listening on {ENDPOINT}...");
+Log.Information($"Listening on {ENDPOINT}...");
 
 while (true) 
     Console.ReadLine();

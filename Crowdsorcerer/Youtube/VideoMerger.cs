@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Buffered;
+using Serilog;
 
 namespace Crowdsorcerer.Youtube
 {
@@ -17,18 +18,26 @@ namespace Crowdsorcerer.Youtube
 
         public static async Task Merge(string sourceAudioPath, string sourceVideoPath, string outputPath)
         {
+            Log.Debug("[VideoMerger] Merging audio and video into file\n" +
+                      $"audio path: {sourceAudioPath}\n" +
+                      $"video path: {sourceVideoPath}\n" +
+                      $"output path: {outputPath}");
+
             var res = await Cli.Wrap(FFmpegPath)
                 .WithArguments($"-y -i {sourceVideoPath} -i {sourceAudioPath} -c:v copy -c:a aac {outputPath}")
                 .ExecuteBufferedAsync();
 
-            Console.WriteLine(res.StandardOutput);
-
-            Console.WriteLine("Output file successfully created.");
+            Log.Debug($"[VideoMerger] Output file {outputPath} successfully created.");
         }
 
         //TODO: could be unsafe to return the output uri without lock
         public static async Task Merge(Uri sourceAudioUri, Uri sourceVideoUri, Uri outputUri)
-        { 
+        {
+            Log.Debug("[VideoMerger] Merging audio and video into stream\n" +
+                      $"audio uri: {sourceAudioUri}\n" +
+                      $"video uri: {sourceVideoUri}\n" +
+                      $"output uri: {outputUri}");
+
             cts.Cancel();
             if (previousOutputUri != null) ReturnOutputUri(previousOutputUri);
 
@@ -40,10 +49,7 @@ namespace Crowdsorcerer.Youtube
                 //.WithStandardErrorPipe(PipeTarget.ToDelegate(l => Console.WriteLine("[ffmpeg] " + l)))
                 .ExecuteBufferedAsync();
 
-            //ReturnOutputUri(outputUri);
-            //Console.WriteLine(res.StandardOutput);
-
-            Console.WriteLine("Output stream successfully created.");
+            Log.Debug($"[VideoMerger] Output file {outputUri} successfully created.");
         }
 
         public static Uri GetUniqueOutputUri() => new($"http://localhost:{Unique.Port()}/crowdsorcerer/video");

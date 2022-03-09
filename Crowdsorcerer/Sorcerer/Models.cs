@@ -3,6 +3,7 @@
     public record Reaction
     {
         public string targetMessageId;
+        public bool isPositive;
     }
 
     public record Message

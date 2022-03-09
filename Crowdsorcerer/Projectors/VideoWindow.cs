@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using LibVLCSharp.Shared;
+using Serilog;
 
 namespace Crowdsorcerer.Projectors
 {
@@ -35,16 +36,21 @@ namespace Crowdsorcerer.Projectors
             videoPlayer.Opening += (_, _) =>
             {
                 videoView.Visible = true;
+                Log.Debug("[VideoPlayer] Opening media...");
             };
             videoPlayer.EndReached += (_, _) =>
             {
                 isBusy = false;
                 videoView.Visible = false;
+
+                Log.Debug("[VideoPlayer] Reached the of the media.");
+
                 VideoFinished?.Invoke();
             };
             videoPlayer.EncounteredError += (sender, e) =>
             {
-                
+                Log.Error($"[VideoPlayer] Encountered error: {e}");
+                VideoFinished?.Invoke();
             };
         }
 

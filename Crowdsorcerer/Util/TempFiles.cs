@@ -32,11 +32,5 @@ namespace Crowdsorcerer
 
             tempFiles.Clear();
         }
-
-        public static void PrintAll()
-        {
-            foreach (var tempFile in tempFiles)
-                Console.WriteLine(tempFile);
-        }
     }
 }
