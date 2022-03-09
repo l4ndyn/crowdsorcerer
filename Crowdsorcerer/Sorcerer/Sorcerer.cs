@@ -11,10 +11,7 @@ namespace Crowdsorcerer.Sorcerer
 {
     public class Sorcerer
     {
-        Dictionary<string, Url> yts;
-        List<Url> orderedYts;
-
-        Queue<YoutubeVideoSource> youtubeQueue;
+        Queue<Message> youtubeQueue;
 
         Projector projector;
         object projectionTaskLock = new();
@@ -22,9 +19,6 @@ namespace Crowdsorcerer.Sorcerer
 
         public Sorcerer()
         {
-            yts = new();
-            orderedYts = new();
-
             youtubeQueue = new();
 
             projector = new();
@@ -44,10 +38,10 @@ namespace Crowdsorcerer.Sorcerer
             projector.ProjectYoutube(url);
         }
 
-        public void AddYoutube(Url url) => ProjectYoutube(new YoutubeUrl { url = url.url });
-        public void AddYoutube(Text title) => ProjectYoutube(new YoutubeTitle { title = title.text });
+        public void AddYoutube(Url url) => ProjectYoutube(url);
+        public void AddYoutube(Text title) => ProjectYoutube(title);
 
-        public void ProjectYoutube(YoutubeVideoSource source)
+        public void ProjectYoutube(Message source)
         {
             lock (projectionTaskLock)
             {
@@ -70,23 +64,23 @@ namespace Crowdsorcerer.Sorcerer
 
         public void AddReaction(Reaction reaction)
         {
-            if (yts.TryGetValue(reaction.targetMessageId, out Url url))
-            {
-                url.votes++;
-                SortYts();
-            }
+            //if (yts.TryGetValue(reaction.targetMessageId, out Url url))
+            //{
+            //    url.votes++;
+            //    SortYts();
+            //}
         }
         
         public void RemoveReaction(Reaction reaction)
         {
-            if (yts.TryGetValue(reaction.targetMessageId, out Url url))
-            {
-                url.votes--;
-                SortYts();
-            }
+            //if (yts.TryGetValue(reaction.targetMessageId, out Url url))
+            //{
+            //    url.votes--;
+            //    SortYts();
+            //}
         }
 
-        void SortYts() => orderedYts.Sort((x, y) => x.votes.CompareTo(y.votes));
+        //void SortYts() => orderedYts.Sort((x, y) => x.votes.CompareTo(y.votes));
 
         void ProjectSpotify(Url url)
         {

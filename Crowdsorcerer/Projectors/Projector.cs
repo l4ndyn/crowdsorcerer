@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Crowdsorcerer.Sorcerer;
 using Crowdsorcerer.Youtube;
 using YouTubeSearch;
 using Action = System.Action;
@@ -14,8 +15,6 @@ namespace Crowdsorcerer.Projectors
     {
         VideoWindow videoWindow;
         YoutubeProvider youtubeProvider;
-
-        
 
         public event Action VideoFinished;
         public bool IsVideoPlaying => videoWindow.IsPlaying;
@@ -33,7 +32,7 @@ namespace Crowdsorcerer.Projectors
             });
         }
 
-        public async Task ProjectYoutube(YoutubeUrl url)
+        public async Task ProjectYoutube(Url url)
         {
             var videoInfo = await youtubeProvider.GetUris(url.url);
             Log.Debug($"[Projector] Projecting video with info: {videoInfo}");
@@ -42,8 +41,6 @@ namespace Crowdsorcerer.Projectors
                 ProjectMuxed(videoInfo.videoUri, videoInfo.audioUri);
             else
                 ProjectSynced(videoInfo.videoUri, videoInfo.audioUri);
-
-            //}
 
             //TODO: is this unstable?
             void ProjectMuxed(Uri videoUri, Uri audioUri)
@@ -59,20 +56,20 @@ namespace Crowdsorcerer.Projectors
                 videoWindow.Play(videoUri, audioUri);
             }
         }
-        public async Task ProjectYoutube(YoutubeTitle title)
+        public async Task ProjectYoutube(Text title)
         {
             VideoSearch search = new();
-            var videos = await search.GetVideos(title.title, 1);
+            var videos = await search.GetVideos(title.text, 1);
 
-            Log.Debug($"[Projector] Fetching video url from title: {title.title}");
+            Log.Debug($"[Projector] Fetching video url from title: {title.text}");
 
-            await ProjectYoutube(new YoutubeUrl { url = videos.First().getUrl() });
+            await ProjectYoutube(new Url { url = videos.First().getUrl() });
         }
 
-        public async Task ProjectYoutube(YoutubeVideoSource source)
+        public async Task ProjectYoutube(Sorcerer.Message source)
         {
-            if (source is YoutubeUrl url) await ProjectYoutube(url);
-            if (source is YoutubeTitle title) await ProjectYoutube(title);
+            if (source is Url url) await ProjectYoutube(url);
+            if (source is Text title) await ProjectYoutube(title);
             else throw new ArgumentException();
         }
     }
