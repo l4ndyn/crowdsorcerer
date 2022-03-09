@@ -11,6 +11,9 @@ namespace Crowdsorcerer.Projectors
 
         public event Action VideoFinished;
 
+        bool isBusy;
+        public bool IsPlaying => videoPlayer.IsPlaying || isBusy;
+
         public VideoWindow()
         {
             if (!DesignMode)
@@ -24,8 +27,22 @@ namespace Crowdsorcerer.Projectors
             videoPlayer = new MediaPlayer(libVLC);
 
             videoView.MediaPlayer = videoPlayer;
+            CheckForIllegalCrossThreadCalls = false;
 
-            videoPlayer.EndReached += (_, _) => VideoFinished?.Invoke();
+            videoPlayer.Opening += (_, _) =>
+            {
+                videoView.Visible = true;
+            };
+            videoPlayer.EndReached += (_, _) =>
+            {
+                isBusy = false;
+                videoView.Visible = false;
+                VideoFinished?.Invoke();
+            };
+            videoPlayer.EncounteredError += (sender, e) =>
+            {
+                Console.WriteLine("wtf");
+            };
         }
 
         public void Play(string videoPath) => PlayOn(videoPlayer, new(libVLC, videoPath));
@@ -34,6 +51,7 @@ namespace Crowdsorcerer.Projectors
 
         void PlayOn(MediaPlayer player, Media media)
         {
+            isBusy = true;
             player.Stop();
 
             player.Media = media;
@@ -43,6 +61,7 @@ namespace Crowdsorcerer.Projectors
         }
         void PlayOn(MediaPlayer player, Media video, string audioUri)
         {
+            isBusy = true;
             player.Stop();
 
             player.Media = video;
@@ -55,6 +74,8 @@ namespace Crowdsorcerer.Projectors
 
         private void VideoWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            isBusy = false;
+
             videoPlayer.Stop();
             videoPlayer.Dispose();
             libVLC.Dispose();
