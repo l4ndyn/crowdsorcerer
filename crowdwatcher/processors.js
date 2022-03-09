@@ -1,5 +1,4 @@
 const typeLocator = require('./typeLocator.js');
-const messageTypes = ['text', 'image', 'video', 'youtubeUrl'];
 
 module.exports = {
     process: function(type, event) {
@@ -34,7 +33,7 @@ module.exports = {
     },
     processYoutubeTitle: function(event) {
         let body;
-        for (const identifier of typeLocator.mustStartWith) {
+        for (const identifier of typeLocator.ytTitleMustStartWith) {
             if (event.body.startsWith(identifier)) {
                 body = event.body.slice(identifier.length);
                 break;
