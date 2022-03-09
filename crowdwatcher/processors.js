@@ -34,7 +34,7 @@ module.exports = {
     processYoutubeTitle: function(event) {
         let body;
         for (const identifier of typeLocator.ytTitleMustStartWith) {
-            if (event.body.startsWith(identifier)) {
+            if (event.body.toLowerCase().startsWith(identifier)) {
                 body = event.body.slice(identifier.length);
                 break;
             }

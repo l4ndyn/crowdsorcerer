@@ -14,11 +14,10 @@ function toUrl(string) {
     return undefined;
 }
 
-const ytTitleMustStartWith = ['yt ', 'yt: ', 'yt:', 'youtube ', 'youtube: ', 'youtube:', 'play: ', 'play:', 'play ',
-                                'Yt ', 'Yt: ', 'Yt:', 'Youtube ', 'Youtube: ', 'Youtube:', 'Play: ', 'Play:', 'Play '];
+const ytTitleMustStartWith = ['yt ', 'yt: ', 'yt:', 'youtube ', 'youtube: ', 'youtube:', 'play ', 'play: ', 'play:'];
 function isYoutubeTitleIdentifier(message) {
     
-    return ytTitleMustStartWith.map(s => message.startsWith(s)).reduce((a, c) => a || c);
+    return ytTitleMustStartWith.map(s => message.toLowerCase().startsWith(s)).reduce((a, c) => a || c);
 }
 
 module.exports = {
