@@ -6,7 +6,9 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using ChromeBrowserCookieReader;
 using VideoLibrary;
+using Cookie = System.Net.Cookie;
 
 namespace Crowdsorcerer.Youtube
 {
@@ -14,27 +16,37 @@ namespace Crowdsorcerer.Youtube
     {
         class Handler
         {
-            public HttpMessageHandler GetHandler()
+            CookieContainer Cookies { get; }
+
+            public Handler()
             {
-                CookieContainer cookieContainer = new CookieContainer();
-                cookieContainer.Add(new Cookie("CONSENT", "YES+cb", "/", "youtube.com"));
-                return new HttpClientHandler
+                Cookies = new();
+
+                Cookies.Add(new Cookie("CONSENT", "YES+cb", "/", "youtube.com"));
+
+                ChromeCookieReader cookieReader = new();
+                var userCookies = cookieReader.ReadCookies(".youtube.com")
+                    .Select(c => new Cookie(c.name, c.value, "/", "youtube.com"));
+
+                //foreach (var cookie in userCookies)
+                //    Cookies.Add(cookie);
+            }
+
+            public HttpMessageHandler GetHandler() =>
+                new HttpClientHandler
                 {
                     UseCookies = true,
-                    CookieContainer = cookieContainer
+                    CookieContainer = Cookies
                 };
-
-            }
         }
 
         private long chunkSize = 10_485_760;
         private long _fileSize = 0L;
         private HttpClient _client = new();
+        private Handler handler = new();
 
-        protected override HttpMessageHandler MakeHandler()
-        {
-            return new Handler().GetHandler();
-        }
+        protected override HttpMessageHandler MakeHandler() => handler.GetHandler();
+
         public async Task CreateDownloadAsync(Uri uri, string filePath)
         {
             var totalBytesCopied = 0L;
@@ -73,6 +85,7 @@ namespace Crowdsorcerer.Youtube
                 }
             }
         }
+
         private async Task<long?> GetContentLengthAsync(string requestUri, bool ensureSuccess = true)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Head, requestUri))

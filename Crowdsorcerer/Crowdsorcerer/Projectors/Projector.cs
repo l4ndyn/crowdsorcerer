@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Crowdsorcerer.Sorcerer;
@@ -34,7 +35,21 @@ namespace Crowdsorcerer.Projectors
 
         public async Task ProjectYoutube(Url url)
         {
-            var videoInfo = await youtubeProvider.GetUris(url.url);
+            Log.Debug($"[Projector] Fetching stream links from url: {url}");
+
+            YoutubeVideoInfo videoInfo;
+            try
+            {
+                videoInfo = await youtubeProvider.GetUris(url.url);
+            }
+            catch (HttpRequestException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                    throw new InvalidYoutubeSessionException("Unable to fetch stream links. The used YouTube cookies might be expired.");
+
+                throw;
+            }
+
             Log.Debug($"[Projector] Projecting video with info: {videoInfo}");
 
             if (videoInfo.length != -1 && videoInfo.length < 60)
@@ -59,9 +74,9 @@ namespace Crowdsorcerer.Projectors
         public async Task ProjectYoutube(Text title)
         {
             VideoSearch search = new();
-            var videos = await search.GetVideos(title.text, 1);
 
             Log.Debug($"[Projector] Fetching video url from title: {title.text}");
+            var videos = await search.GetVideos(title.text, 1);
 
             await ProjectYoutube(new Url { url = videos.First().getUrl() });
         }
